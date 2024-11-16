@@ -49,10 +49,24 @@ pipeline {
                 }
             }
         }
+        stage('Security Scan') {
+            steps {
+                sh 'bandit -r .'
+                sh 'pip-audit'
+            }
+        }
+        stage('Coverage') {
+            script {
+                steps {
+                    sh 'coverage run -m pytest tests/'
+                }
+            }
+        } 
+    
         stage('Deploy') {
             steps {
                 echo "Deploying application..."
-                // Add actual deployment steps here
+                sh './deploy_local.sh'
             }
         }
     }
