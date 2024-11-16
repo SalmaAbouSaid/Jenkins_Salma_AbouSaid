@@ -12,12 +12,16 @@ pipeline {
                         sh '''
                         bash -c "
                             ${PYTHON_VERSION} -m venv ${VENV_DIR}
-                            source ${VENV_DIR}/bin/activate
-                            pip install --upgrade pip
-                            pip install -r requirements.txt
-                        "
+                            "
                         '''
                     }
+                    sh '''
+                    bash -c "
+                        source ${VENV_DIR}/bin/activate
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+                    "
+                    '''
                 }
             }
         }
