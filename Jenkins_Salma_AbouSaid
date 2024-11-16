@@ -51,13 +51,28 @@ pipeline {
         }
         stage('Security Scan') {
             steps {
-                sh 'bandit -r .'
-                sh 'pip-audit'
+                script {
+                        sh '''
+                        bash -c "
+                            source ${VENV_DIR}/bin/activate
+                            bandit -r .
+                            pip-audit
+                        "
+                        '''
+                    }
             }
         }
         stage('Coverage') {
             steps {
-                sh 'coverage run -m pytest tests/'
+                script {
+                        sh '''
+                        bash -c "
+                            source ${VENV_DIR}/bin/activate
+                            coverage run -m pytest tests/
+                            coverage report 
+                        "
+                        '''
+                    }
             }
             
         } 
