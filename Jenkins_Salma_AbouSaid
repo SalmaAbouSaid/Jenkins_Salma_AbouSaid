@@ -56,11 +56,10 @@ pipeline {
             }
         }
         stage('Coverage') {
-            script {
-                steps {
-                    sh 'coverage run -m pytest tests/'
-                }
+            steps {
+                sh 'coverage run -m pytest tests/'
             }
+            
         } 
     
         stage('Deploy') {
