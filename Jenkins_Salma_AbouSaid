@@ -1,21 +1,23 @@
 pipeline {
     agent any
     environment {
-        PYTHON_VERSION = 'python3.12' 
-        VENV_DIR = 'venv'            
+        PYTHON_VERSION = 'python3.12' // Specify Python version
+        VENV_DIR = 'venv'            // Virtual environment directory
     }
     stages {
         stage('Setup') {
             steps {
                 script {
-                    if (!fileExists("${env.WORKSPACE}/${VIRTUAL_ENV}")) {
+                    if (!fileExists("${WORKSPACE}/${VENV_DIR}")) {
                         sh '''
                         bash -c "
-                            {PYTHON_VERSION} -m venv ${VIRTUAL_ENV}
-                            source ${VIRTUAL_ENV}/bin/activate 
+                            ${PYTHON_VERSION} -m venv ${VENV_DIR}
+                            source ${VENV_DIR}/bin/activate
+                            pip install --upgrade pip
                             pip install -r requirements.txt
                         "
                         '''
+                    }
                 }
             }
         }
@@ -24,6 +26,7 @@ pipeline {
                 script {
                     sh '''
                     bash -c "
+                        source ${VENV_DIR}/bin/activate
                         flake8 app.py
                     "
                     '''
@@ -35,7 +38,8 @@ pipeline {
                 script {
                     sh '''
                     bash -c "
-                        pytest 
+                        source ${VENV_DIR}/bin/activate
+                        pytest
                     "
                     '''
                 }
@@ -43,18 +47,14 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                script {
-                    // Deployment logic, e.g., pushing to a remote server
-                    echo "Deploying application..."
-                }
+                echo "Deploying application..."
+                // Add actual deployment steps here
             }
         }
-    }
     }
     post {
         always {
             cleanWs()
         }
     }
-
 }
